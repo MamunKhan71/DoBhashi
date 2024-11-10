@@ -6,6 +6,9 @@ import { ObjectId } from 'mongodb'
 import { IconBadge } from '@/components/icon-badge'
 import { LayoutDashboard } from 'lucide-react'
 import TitleForm from './_components/title-form'
+import { Description } from '@radix-ui/react-dialog'
+import DescriptionForm from './_components/description-form'
+import ImageForm from './_components/image-form'
 const CourseDetailsPage = async ({ params }) => {
     const { userId } = await auth()
 
@@ -45,13 +48,21 @@ const CourseDetailsPage = async ({ params }) => {
                 </div>
             </div>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mt-16'>
-                <div>
+                <div className='col-span-2'>
                     <div className='flex items-center gap-x-2'>
                         <IconBadge icon={LayoutDashboard} />
                         <h2 className='text-xl'>Customize your course</h2>
                     </div>
                 </div>
                 <TitleForm
+                    initialData={course}
+                    courseId={course.id}
+                />
+                <DescriptionForm
+                    initialData={course}
+                    courseId={course.id}
+                />
+                <ImageForm
                     initialData={course}
                     courseId={course.id}
                 />
