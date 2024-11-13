@@ -1,20 +1,14 @@
 import { db } from '@/lib/db'
-import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import React from 'react'
 import { ObjectId } from 'mongodb'
 import { IconBadge } from '@/components/icon-badge'
 import { LayoutDashboard } from 'lucide-react'
 import TitleForm from './_components/title-form'
-import { Description } from '@radix-ui/react-dialog'
 import DescriptionForm from './_components/description-form'
 import ImageForm from './_components/image-form'
 const CourseDetailsPage = async ({ params }) => {
-    const { userId } = await auth()
-
-    if (!userId) {
-        return redirect("/")
-    }
+    
     if (!ObjectId.isValid(params.courseId)) {
         return redirect('/')
     }

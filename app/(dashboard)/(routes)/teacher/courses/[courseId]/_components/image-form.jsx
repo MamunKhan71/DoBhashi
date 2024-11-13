@@ -4,16 +4,29 @@ import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import axios from 'axios'
+
+import {
+    Form,
+    FormControl,
+    FormMessage,
+    FormField,
+    FormItem
+} from "@/components/ui/form"
 import { Button } from '@/components/ui/button'
 import { ImageIcon, Pencil, PlusCircle } from 'lucide-react'
+import { Input } from '@/components/ui/input'
 import toast from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import { cn } from '@/lib/utils'
+import { Textarea } from '@/components/ui/textarea'
 import Image from 'next/image'
-import FileUploader from '@/components/file-uploader'
+import { UploadButton } from '@/lib/uploadthing'
+import { FileUpload } from '@/components/file-upload'
+// import { FileUpload } from '@/components/file-uploader'
 
 const formSchema = z.object({
     imageUrl: z.string().min(1, {
-        message: "Image is required!"
+        message: "Description is required!"
     })
 })
 const ImageForm = ({ courseId, initialData }) => {
@@ -46,48 +59,56 @@ const ImageForm = ({ courseId, initialData }) => {
                     {isEditing && (
                         <>Cancel</>
                     )}
-                    {!isEditing && !initialData.imageUrl && (
+                    {
+                        !isEditing && !initialData.imageUrl && (
+                            <><PlusCircle className='h-4 w-4 mr-2' />Add an image</>
+                        )
+                    }
+                    {!isEditing && initialData?.imageUrl && (
                         <>
-                            <PlusCircle className='size-4 mr-2' />Add an image
+                            <Pencil className='h-4 w-4 mr-2' />
+                            Edit image
                         </>
                     )}
-                    {!isEditing && initialData.imageUrl && (
-                        <><Pencil className='h-4 w-4 mr-2' />Edit image</>
-                    )}
                 </Button>
+
             </div>
             {!isEditing && (
-                !initialData.imageUrl ? (
+                !initialData?.imageUrl ? (
                     <div className='flex items-center justify-center h-60 bg-slate-200 rounded-md'>
                         <ImageIcon className='h-10 w-10 text-slate-500' />
                     </div>
                 ) : (
                     <div className='relative aspect-video mt-2'>
                         <Image
-                            alt='upload'
+                            alt='Upload'
                             fill
                             className='object-cover rounded-md'
                             src={initialData.imageUrl}
-
                         />
                     </div>
                 )
             )}
             {isEditing && (
                 <div>
-                    <FileUploader
-                        endPoint={'courseImage'}
-                        onChange={(url) => {
-                            if (url) {
-                                onSubmit({ imageUrl: url })
-                            }
+                    <FileUpload
+                        endpoint="courseImageUploader"
+                        onClientUploadComplete={(res) => {
+                            // Do something with the response
+                            console.log("Files: ", res);
+                            alert("Upload Completed");
+                        }}
+                        onUploadError={(error) => {  // Removed the `: Error` type annotation
+                            // Do something with the error.
+                            alert(`ERROR! ${error.message}`);
                         }}
                     />
-                    <div className='text-xs text-muted-foreground mt-4'>
-                        16:9 aspect ratio recommended!
+                    <div className='text-xs text-muted-foreground mt-3'>
+                        16:9 aspect ratio recommended
                     </div>
                 </div>
             )}
+
         </div>
     )
 }
