@@ -41,6 +41,7 @@ const ImageForm = ({ courseId, initialData }) => {
     const { isSubmitting, isValid } = form.formState;
     const toggleEdit = () => setIsEditing(current => !current)
     const onSubmit = async (values) => {
+        console.log(`Values: ${values?.presignedUrls}`);
         try {
             await axios.patch(`/api/courses/${courseId}`, values)
             toast.success("Course Updated!")
@@ -94,15 +95,21 @@ const ImageForm = ({ courseId, initialData }) => {
                     <FileUpload
                         endpoint="courseImageUploader"
                         onClientUploadComplete={(res) => {
-                            // Do something with the response
                             console.log("Files: ", res);
-                            alert("Upload Completed");
+                            toast.success("Uploaded Successfully");
                         }}
-                        onUploadError={(error) => {  // Removed the `: Error` type annotation
-                            // Do something with the error.
+                        onChange={(url) => {
+                            if (url) {
+                                onSubmit({ imageUrl: url });
+                            } else {
+                                onSubmit({ message: "No data" });
+                            }
+                        }}
+                        onUploadError={(error) => {
                             alert(`ERROR! ${error.message}`);
                         }}
                     />
+
                     <div className='text-xs text-muted-foreground mt-3'>
                         16:9 aspect ratio recommended
                     </div>
